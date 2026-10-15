@@ -1,10 +1,12 @@
 //オンラインのプレイヤー一覧を保持するオブジェクト
 
 const players = {};
+const { recordLogin, recordLogout } = require('../db_models/logModel');
 
 function setupSocket(io) {
     io.on('connection', (socket) => {
         console.log(`プレイヤーが接続しました: ${socket.id}`);
+        recordLogin(socket.id);
 
         // 新規プレイヤーの初期位置を登録
         players[socket.id] = { x: 0, y: 0, z: 0 };
@@ -28,6 +30,7 @@ function setupSocket(io) {
             delete players[socket.id];
             // 全員に更新されたプレイヤー一覧を配信
             io.emit('updatePlayers', players);
+            recordLogout(socket.id);
         });
     });
 }
