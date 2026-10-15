@@ -1,41 +1,5 @@
 // server/index.js
-const express = require('express');
-const helmet = require('helmet');
-const http = require('http');
-const { Server } = require('socket.io');
-const cors = require('cors');
-//外部ファイル
-const { setupSocket } = require('./sockets/gameSocket');
-const indexRoutes = require('./routes/indexRoutes');
-
-const app = express();
-app.use(
-    helmet({
-        contentSecurityPolicy: {
-            directives: {
-                defaultSrc: ["'self'"],
-                connectSrc: ["'self'", 'http://localhost:3001', 'ws://localhost:3001'],
-            }
-        }
-    })
-);
-
-app.use(cors());
-
-const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: 'http://localhost:5173', // ViteのフロントエンドURLを許可
-        methods: ['GET', 'POST'],
-    },
-});
-
-// ルーティングを適用（すべてのリクエストを indexRoutes に割り振る）
-app.use('/', indexRoutes);
-
-
-// オンラインのプレイヤー一覧を保持するオブジェクト
-setupSocket(io);
+const server = require('./app');
 
 const PORT = process.env.PORT === undefined ? 3001 : Number(process.env.PORT);
 
