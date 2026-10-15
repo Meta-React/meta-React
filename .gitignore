@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# .gitignore に追記する内容
+database.sqlite
+# または server/ フォルダに入れたなら
+server/database.sqlite
