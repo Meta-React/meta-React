@@ -30,7 +30,7 @@ const io = new Server(server, {
     },
 });
 
-//★ ルーティングを適用（すべてのリクエストを indexRoutes に割り振る）
+// ルーティングを適用（すべてのリクエストを indexRoutes に割り振る）
 app.use('/', indexRoutes);
 
 
