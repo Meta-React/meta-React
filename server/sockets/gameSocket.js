@@ -5,11 +5,15 @@ const { recordLogin, recordLogout } = require('../db_models/logModel');
 
 function setupSocket(io) {
     io.on('connection', (socket) => {
-        console.log(`プレイヤーが接続しました: ${socket.id}`);
+
+        // クライアントから送られてきた userId を取得
+        const userId = socket.handshake.query.userId || 'guest_user';
+
+        console.log(`プレイヤーが接続しました: ${userId} (socket ID: ${socket.id})`);
         recordLogin(socket.id);
 
         // 新規プレイヤーの初期位置を登録
-        players[socket.id] = { x: 0, y: 0, z: 0 };
+        players[socket.id] = { x: 0, y: 0.5, z: 0 };
 
         // ① 接続した本人に、現在の全プレイヤー一覧を送る
         io.emit('updatePlayers', players);

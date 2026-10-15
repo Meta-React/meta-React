@@ -18,6 +18,7 @@ db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS login_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
             socket_id TEXT NOT NULL,
             login_time TEXT NOT NULL,
             logout_time TEXT
