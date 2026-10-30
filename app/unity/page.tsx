@@ -1,8 +1,8 @@
 'use client';
 
-import { sendTaskMessage } from "next/dist/build/swc/generated-native";
 import React, { useEffect, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
+import { Socket, io } from "socket.io-client";
 
 export default function GamePage() {
     // Unityのビルドファイルへのパスを指定
@@ -17,7 +17,11 @@ export default function GamePage() {
     const [dpr, setDpr] = useState(1);
 
 
+
     useEffect(() => {
+
+
+        const socket: Socket = io("http://localhost:3001");
 
         setDpr(window.devicePixelRatio);
 
@@ -34,9 +38,16 @@ export default function GamePage() {
             sendMessage("Player", "OnReceiveInput", "STOP"); // どのcaseにも当てはまらず、moveDirがzeroになる
         };
 
+
+        socket.on("players", (players) => {
+            console.log("全員の位置：", players);
+        });
+
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
         return () => {
+            socket.disconnect();
+
             window.removeEventListener("keydown", handleKeyDown);
             window.removeEventListener("keyup", handleKeyUp);
         };
