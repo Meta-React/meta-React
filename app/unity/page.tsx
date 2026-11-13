@@ -72,6 +72,7 @@ export default function GamePage() {
 
     //他プレイヤー描画
     // サーバーとの接続 + 全員の位置をUnityへ
+    //aaaaaaa
     useEffect(() => {
         if (!isLoaded) return;   // Unityの読み込みが終わってから
 
