@@ -40,6 +40,16 @@ export default function GamePage() {
         };
 
         const handleKeyDown = (e: KeyboardEvent) => {
+
+            // スペース: ジャンプ(押しっぱなしの連続発火は無視)
+            if (e.code === "Space") {
+                e.preventDefault();   // ページのスクロールを防ぐ
+                if (!e.repeat) {
+                    sendMessage("Player", "OnReceiveInput", "SPACE");
+                }
+                return;
+            }
+
             const k = keyMap[e.key.toLowerCase()];
             if (!k) return;
             pressed.add(k);
