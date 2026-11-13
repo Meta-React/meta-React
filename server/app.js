@@ -1,3 +1,4 @@
+// server/app.js
 const express = require('express');
 const helmet = require('helmet');
 const http = require('http');
@@ -16,6 +17,7 @@ app.use(
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ["'self'"],
+                styleSrc: ["'self'", "'unsafe-inline'"],
                 connectSrc: ["'self'", 'http://localhost:3001', 'ws://localhost:3001'],
             }
         }
@@ -23,6 +25,7 @@ app.use(
 );
 
 app.use(cors());
+app.use(express.json());
 
 // ルーティングの適用
 app.use('/', indexRoutes);
@@ -36,7 +39,7 @@ const io = new Server(server, {
     },
 });
 
-// オンラインのプレイヤー一覧を保持するオブジェクト
+// Socket.ioの初期設定
 setupSocket(io);
 
 // 起動前の server オブジェクトを外部に渡すためにエクスポートする
