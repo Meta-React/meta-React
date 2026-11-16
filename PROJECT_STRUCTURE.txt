@@ -1,0 +1,36 @@
+src/
+├── assets/                  # 3Dモデル、テクスチャ、音声などの静的アセット
+│   ├── models/              # .gltf / .glb ファイル（アバター、建物、小道具）
+│   ├── textures/            # マテリアル用画像（地面、壁、空など）
+│   └── sounds/              # 効果音・BGM
+│
+├── components/
+│   ├── canvas/              # 3D空間内のコンポーネント（Canvas内でレンダリング）
+│   │   ├── Scene.jsx        # Canvas全体を束ねるメインシーン（ライト、環境光など）
+│   │   ├── Experience.jsx   # 物理演算ワールド・アバター・マップの配置
+|   |   ├── Move.jsx         # プレイヤーの動き
+│   │   ├── Player.jsx       # 自プレイヤー（操作キャラクター・カメラ追従）
+│   │   ├── OtherPlayer.jsx  # 他プレイヤー（オンライン同期用アバター）
+│   │   ├── Map/             # 3Dマップ・建物の構成パーツ
+│   │   │   ├── Ground.jsx
+│   │   │   └── Buildings.jsx
+│   │   └── Objects/         # 空間内に置くギミック・家具（椅子、ポータルなど）
+│   │
+│   └── dom/                 # 2DのWeb UI（HTML/DOMで重なる画面オーバーレイ）
+│       ├── HUD.jsx          # 操作ボタン、ミニマップ、ステータス表示
+│       ├── Chat.jsx         # テキストチャット画面
+│       ├── ProfileModal.jsx # アバター変更・プロフィール設定画面
+│       └── UserList.jsx     # 現在の入室者一覧リスト
+│
+├── hooks/                   # カスタムフック
+│   ├── useKeyboard.js       # キーボード入力取得（WASD / 矢印キー）
+│   ├── useSocket.js         # Socket.io等による位置同期・データ送受信
+│   └── useAudio.js          # ボイスチャットや空間音声の制御
+│
+├── stores/                  # 状態管理（Zustand などを推奨）
+│   ├── useGameStore.js      # ゲームの状態（ゲームオーバー、モーダル開閉、チャット状態など）
+│   └── useNetworkStore.js   # 接続状態、自他プレイヤーのTransformデータ（位置・角度）
+│
+└── utils/                   # 共通関数・計算用
+    ├── constants.js         # 定数（サーバーURL、スポーン位置など）
+    └── math.js              # 3D座標の補間（Lerp）などの計算関数
