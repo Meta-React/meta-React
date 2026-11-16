@@ -12,6 +12,7 @@ const navItems = [
     { name: 'ワールド一覧', href: '/worlds' },
     { name: '掲示板', href: '/board' },
     { name: 'マイページ', href: '/profile' },
+    { name: 'お絵描き', href: '/draw' },
 ];
 
 export default function Navbar() {
