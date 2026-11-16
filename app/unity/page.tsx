@@ -45,7 +45,7 @@ export default function GamePage() {
             if (e.code === "Space") {
                 e.preventDefault();   // ページのスクロールを防ぐ
                 if (!e.repeat) {
-                    sendMessage("Player", "OnReceiveInput", "SPACE");
+                    sendMessage("Player", "OnReceiveInput", "JUMP");
                 }
                 return;
             }
