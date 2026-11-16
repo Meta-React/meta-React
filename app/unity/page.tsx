@@ -115,8 +115,8 @@ export default function GamePage() {
     }, [addEventListener, removeEventListener]);
 
     return (
-        <main style={{ padding: "2rem", textAlign: "center" }}>
-            <h1>Next.js × Unity</h1>
+        <main style={{ padding: "0", margin: "0", width: "100vw", height: "calc(100vh - 64px)", overflow: "hidden" }}>
+
 
             {/* Unityを表示する領域 */}
             <div style={{ width: "100vw", height: "100vh" }}>
