@@ -6,6 +6,12 @@ const players = {};
 // 入退室の履歴ログ（最新50件まで保存）
 const accessLogs = [];
 
+// チャット履歴（最新50件まで保存）
+const chatHistory = [];
+
+// 音声通話に参加中のユーザーID一覧
+const voiceUsers = new Set();
+
 // QRコード用のサンプル認証トークン一覧（テスト用・後から追加可能）
 const VALID_TOKENS = {
     'qr-taro-001': { name: 'たろう', role: 'こども' },
@@ -57,6 +63,9 @@ function setupSocket(io) {
         // 全員に現在の全プレイヤー一覧を送る
         io.emit('updatePlayers', players);
 
+        // 新規入室者に過去のチャット履歴を送る
+        socket.emit('chatHistory', chatHistory);
+
         // フロントエンド側から後から名前やQRトークンが送られてきた場合の更新処理
         socket.on('joinRoom', (data) => {
             if (!players[socket.id]) return;
@@ -84,6 +93,62 @@ function setupSocket(io) {
             }
         });
 
+        // --- テキストチャット機能 ---
+        socket.on('sendMessage', (text) => {
+            if (!text || typeof text !== 'string' || !text.trim()) return;
+
+            const messageData = {
+                id: `${Date.now()}-${socket.id}`,
+                sender: players[socket.id]?.name || 'ゲスト',
+                text: text.trim(),
+                timestamp: getCurrentTime(),
+            };
+
+            chatHistory.push(messageData);
+            if (chatHistory.length > 50) {
+                chatHistory.shift();
+            }
+
+            io.emit('newMessage', messageData);
+        });
+
+        // --- WebRTC 音声通話シグナリング ---
+        socket.on('join-voice', () => {
+            const existingUsers = Array.from(voiceUsers).filter((id) => id !== socket.id);
+            socket.emit('voice-users', existingUsers);
+
+            voiceUsers.add(socket.id);
+            socket.broadcast.emit('user-joined-voice', socket.id);
+        });
+
+        socket.on('leave-voice', () => {
+            if (voiceUsers.has(socket.id)) {
+                voiceUsers.delete(socket.id);
+                socket.broadcast.emit('user-left-voice', socket.id);
+            }
+        });
+
+        socket.on('webrtc-offer', ({ target, offer }) => {
+            io.to(target).emit('webrtc-offer', {
+                sender: socket.id,
+                offer,
+            });
+        });
+
+        socket.on('webrtc-answer', ({ target, answer }) => {
+            io.to(target).emit('webrtc-answer', {
+                sender: socket.id,
+                answer,
+            });
+        });
+
+        socket.on('webrtc-ice-candidate', ({ target, candidate }) => {
+            io.to(target).emit('webrtc-ice-candidate', {
+                sender: socket.id,
+                candidate,
+            });
+        });
+
         // プレイヤーが切断（退出）した時の処理
         socket.on('disconnect', () => {
             const target = players[socket.id];
@@ -94,6 +159,12 @@ function setupSocket(io) {
             }
             // 全員に更新されたプレイヤー一覧を配信
             io.emit('updatePlayers', players);
+
+            // 音声通話中だった場合は退出通知を送る
+            if (voiceUsers.has(socket.id)) {
+                voiceUsers.delete(socket.id);
+                io.emit('user-left-voice', socket.id);
+            }
         });
     });
 }
